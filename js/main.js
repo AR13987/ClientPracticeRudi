@@ -8,5 +8,6 @@ let app = new Vue({
         linkText: "More products like this",
         inventory: 100,
         onSale: true,
+        details: ['80 cotton', '20% polyester', 'Gender-neutral'],
     }
 })
