@@ -9,5 +9,14 @@ let app = new Vue({
         inventory: 100,
         onSale: true,
         details: ['80 cotton', '20% polyester', 'Gender-neutral'],
+        variants: [{
+            variantId: 1,
+            variantColor: "green",
+        },
+        {
+            variantId: 2,
+            variantColor: "blue",
+        }],
+        sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
     }
 })
