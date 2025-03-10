@@ -10,7 +10,7 @@ body {
     margin-bottom: 15px;
 }
 
-.product {
+.socks {
     display: flex;
     flex-flow: wrap;
     padding: 1rem;
@@ -23,12 +23,12 @@ img {
     box-shadow: 0 0.5px 1px #d8d8d8;
 }
 
-.product-image {
+.socks-image {
     width: 80%;
 }
 
-.product-image,
-.product-info {
+.socks-image,
+.socks-info {
     margin-top: 10px;
     width: 50%;
 }
