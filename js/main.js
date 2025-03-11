@@ -1,8 +1,10 @@
+let eventBus = new Vue()
+
+
 Vue.component('socks-detail', {
     props: {
         details: {
-            type: Array,
-            required: true
+            type: Array, required: true
         }
     },
 
@@ -15,27 +17,48 @@ Vue.component('socks-detail', {
 })
 
 
-
-Vue.component('socks-review', {
+Vue.component('product-tabs', {
     props: {
         reviews: {
-            type: Array,
-            required: true
+            type: Array, required: false
         }
     },
+
+    template: `
+     <div>   
+       <ul>
+         <span class="tab"
+               :class="{ activeTab: selectedTab === tab }"
+               v-for="(tab, index) in tabs"
+               @click="selectedTab = tab"
+         >{{ tab }}</span>
+       </ul>
+       <div v-show="selectedTab === 'Reviews'">
+         <p v-if="!reviews.length">There are no reviews yet.</p>
+         <ul>
+           <li v-for="review in reviews">
+           <p>{{ review.name }}</p>
+           <p>Rating: {{ review.rating }}</p>
+           <p>{{ review.review }}</p>
+           <p>Recommend: {{review.recommend}}</p>
+           </li>
+         </ul>
+       </div>
+       <div v-show="selectedTab === 'Make a Review'">
+         <socks-review></socks-review>
+       </div>
+     </div>
+`, data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'], selectedTab: 'Reviews'
+        }
+    }
+})
+
+
+Vue.component('socks-review', {
     template: `
     <div>
-    <h2>Reviews</h2>
-    <p v-if="!reviews.length">There are no reviews yet.</p>
-    <ul>
-        <li v-for="review in reviews" :key="review.name">
-            <p>{{ review.name }}</p>
-            <p>Rating: {{ review.rating }}</p>
-            <p>{{ review.review }}</p>
-            <p>Recommend: {{ review.recommend }}</p>
-        </li>
-    </ul>
-
     <form class="review-form" @submit.prevent="onSubmit">
         <p v-if="errors.length">
             <b>Please correct the following error(s):</b>
@@ -81,11 +104,7 @@ Vue.component('socks-review', {
 
     data() {
         return {
-            name: null,
-            review: null,
-            rating: null,
-            errors: [],
-            recommend: null
+            name: null, review: null, rating: null, errors: [], recommend: null
         }
     },
 
@@ -112,13 +131,10 @@ Vue.component('socks-review', {
 
 
             let socksReview = {
-                name: this.name,
-                review: this.review,
-                rating: this.rating,
-                recommend: this.recommend
+                name: this.name, review: this.review, rating: this.rating, recommend: this.recommend
             };
 
-            this.$emit('review-submitted', socksReview);
+            eventBus.$emit('review-submitted', socksReview)
             this.name = null;
             this.review = null;
             this.rating = null;
@@ -128,12 +144,10 @@ Vue.component('socks-review', {
 })
 
 
-
 Vue.component('socks', {
     props: {
         premium: {
-            type: Boolean,
-            required: true,
+            type: Boolean, required: true,
         }
     },
 
@@ -176,14 +190,11 @@ Vue.component('socks', {
 
     data() {
         return {
-            product: "Socks",
-            // image: "./assets/vmSocks-blue-onWhite.jpg",
+            product: "Socks", // image: "./assets/vmSocks-blue-onWhite.jpg",
             altText: "A pair of warm, fuzzy socks",
             link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
-            linkText: "More products like this",
-            // inventory: 10,
-            brand: "Vue Mastery",
-            // inStock: true,
+            linkText: "More products like this", // inventory: 10,
+            brand: "Vue Mastery", // inStock: true,
             details: ['80 cotton', '20% polyester', 'Gender-neutral'],
             variants: [{
                 variantId: 1,
@@ -191,14 +202,13 @@ Vue.component('socks', {
                 variantImage: "./assets/vmSocks-green-onWhite.jpg",
                 variantQuantity: 10,
                 onSale: 1
-            },
-                {
-                    variantId: 2,
-                    variantColor: "blue",
-                    variantImage: "./assets/vmSocks-blue-onWhite.jpg",
-                    variantQuantity: 0,
-                    onSale: 0
-                }],
+            }, {
+                variantId: 2,
+                variantColor: "blue",
+                variantImage: "./assets/vmSocks-blue-onWhite.jpg",
+                variantQuantity: 0,
+                onSale: 0
+            }],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             selectedVariant: 0
         }
@@ -211,8 +221,7 @@ Vue.component('socks', {
 
         reduceToCart() {
             this.$emit('reduce-to-cart', this.variants[this.selectedVariant].variantId);
-        },
-        updateSocks(index) {
+        }, updateSocks(index) {
             this.selectedVariant = index
             console.log(index)
         }
@@ -221,17 +230,13 @@ Vue.component('socks', {
     computed: {
         title() {
             return this.brand + ' ' + this.product
-        },
-        image() {
+        }, image() {
             return this.variants[this.selectedVariant].variantImage
-        },
-        inStock() {
+        }, inStock() {
             return this.variants[this.selectedVariant].variantQuantity
-        },
-        sale() {
+        }, sale() {
             return this.variants[this.selectedVariant].onSale
-        },
-        shipping() {
+        }, shipping() {
             if (this.premium) {
                 return "Free";
             } else {
@@ -244,26 +249,21 @@ Vue.component('socks', {
 })
 
 
-
 let app = new Vue({
-    el: '#app',
-    data: {
-        premium: true,
-        cart: [],
-        reviews: []
+    el: '#app', data: {
+        premium: true, cart: [], reviews: []
     },
 
     methods: {
         updateAddCart(id) {
             this.cart.push(id)
-        },
-        updateReduceCart(id) {
+        }, updateReduceCart(id) {
             this.cart.splice(id, 1)
-        },
-        addReview (socksReview) {
-            this.reviews.push(socksReview)
         }
-
+    },
+    mounted() {
+        eventBus.$on('review-submitted', socksReview => {
+            this.reviews.push(socksReview)
+        })
     }
-
 })
