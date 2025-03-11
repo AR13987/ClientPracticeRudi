@@ -15,6 +15,111 @@ Vue.component('socks-detail', {
 })
 
 
+
+Vue.component('socks-review', {
+    template: `
+    <div>
+    <h2>Reviews</h2>
+    <p v-if="!reviews.length">There are no reviews yet.</p>
+    <ul>
+        <li v-for="review in reviews" :key="review.name">
+            <p>{{ review.name }}</p>
+            <p>Rating: {{ review.rating }}</p>
+            <p>{{ review.review }}</p>
+            <p>Recommend: {{ review.recommend }}</p>
+        </li>
+    </ul>
+
+    <form class="review-form" @submit.prevent="onSubmit">
+        <p v-if="errors.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+                <li v-for="error in errors">{{ error }}</li>
+            </ul>
+        </p>
+
+        <p>
+            <label for="name">Name:</label>
+            <input id="name" v-model="name" placeholder="name">
+        </p>
+
+        <p>
+            <label for="review">Review:</label>
+            <textarea id="review" v-model="review"></textarea>
+        </p>
+
+        <p>
+            <label for="rating">Rating:</label>
+            <select id="rating" v-model.number="rating">
+                <option>5</option>
+                <option>4</option>
+                <option>3</option>
+                <option>2</option>
+                <option>1</option>
+            </select>
+        </p>
+
+        <p>
+            <label>Would you recommend this product?</label>
+            <input type="radio" id="yes" value="Yes" v-model="recommend">
+            <label for="yes">Yes</label>
+            <input type="radio" id="no" value="No" v-model="recommend">
+            <label for="no">No</label>
+        </p>
+
+        <p>
+            <input type="submit" value="Submit"> 
+        </p>
+    </form>
+   </div>`,
+
+    data() {
+        return {
+            name: null,
+            review: null,
+            rating: null,
+            reviews: [],
+            errors: [],
+            recommend: null
+        }
+    },
+
+    methods: {
+        onSubmit() {
+            this.errors = [];
+
+            if (!this.name) {
+                this.errors.push("Name is required.");
+            }
+            if (!this.review) {
+                this.errors.push("Review is required.");
+            }
+            if (!this.rating) {
+                this.errors.push("Rating is required.");
+            }
+            if (!this.recommend) {
+                this.errors.push("Please select whether you recommend this product.");
+            }
+
+
+            let socksReview = {
+                name: this.name,
+                review: this.review,
+                rating: this.rating,
+                recommend: this.recommend
+            };
+
+            this.$emit('review-submitted', socksReview);
+            this.name = null;
+            this.review = null;
+            this.rating = null;
+            this.recommend = null;
+        }
+    }
+})
+
+
+
 Vue.component('socks', {
     props: {
         premium: {
@@ -27,35 +132,34 @@ Vue.component('socks', {
     <div class="socks">
         <div class="socks-image">
             <!-- : или v-bind-->
-            <img :alt=altText :src=image>
+            <img :alt="altText" :src="image">
         </div>
 
         <div class="socks-info">
             <h1>{{title}}</h1>
-            <a :href=link>{{linkText}}</a>
+            <a :href="link">{{linkText}}</a>
 
             <!--         <p v-if="inventory > 10">In Stock</p>-->
             <!--         <p v-else-if="inventory <=10 && inventory > 0">Almost sold out!</p>-->
             <!--         <p v-else>Out of Stock</p>-->
-            <p :class="{OutOfStock: !inStock}" v-show=!inStock>Out of Stock</p>
-            <p v-show=inStock>In Stock</p>
+            <p :class="{OutOfStock: !inStock}" v-show="!inStock">Out of Stock</p>
+            <p v-show="inStock">In Stock</p>
             <p>Shipping: {{shipping}}</p>
-            <span v-show=sale>On Sale</span>
-            
-            <socks-detail :details="details"></socks-detail>
+            <span v-show="sale">On Sale</span>
             
             <div class="socks-detail">
+                <socks-detail :details="details"></socks-detail>
                 <div class="color-box" v-for="(variant, index) in variants" :key=variant.variantId
                      :style="{backgroundColor: variant.variantColor}"
-                     @mouseover=updateSocks(index)>
+                     @mouseover="updateSocks(index)">
                 </div>
                 <ul>
                     <li v-for="size in sizes">{{size}}</li>
                 </ul>
-                <button v-on:click=addToCart :disabled=!inStock
+                <button v-on:click="addToCart" :disabled="!inStock"
                         :class="{disabledButton: !inStock}">Add to cart
                 </button>
-                <button v-on:click=reduceToCart :disabled=!inStock 
+                <button v-on:click="reduceToCart" :disabled="!inStock" 
                 :class="{disabledButton: !inStock}">Reduce to cart</button>
             </div>
         </div>
@@ -130,18 +234,27 @@ Vue.component('socks', {
 
 })
 
+
+
 let app = new Vue({
     el: '#app',
     data: {
         premium: true,
         cart: [],
+        reviews: []
     },
+
     methods: {
         updateAddCart(id) {
             this.cart.push(id)
         },
         updateReduceCart(id) {
             this.cart.splice(id, 1)
-            }
+        },
+        addReview (socksReview) {
+            this.reviews.push(socksReview)
         }
+
+    }
+
 })
