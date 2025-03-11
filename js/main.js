@@ -141,7 +141,7 @@ let app = new Vue({
             this.cart.push(id)
         },
         updateReduceCart(id) {
-            this.cart.remove(id, 1)
+            this.cart.splice(id, 1)
             }
         }
 })
