@@ -31,6 +31,9 @@ let app = new Vue({
     methods: {
         addToCart() {
             this.cart += 1
+            if (this.cart > 10) {
+                this.cart = 10
+            }
         },
         reduceToCart() {
             this.cart -= 1
