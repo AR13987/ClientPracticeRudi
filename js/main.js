@@ -6,7 +6,8 @@ let app = new Vue({
         altText: "A pair of warm, fuzzy socks",
         link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
         linkText: "More products like this",
-        inventory: 100,
+        // inventory: 10,
+        inStock: false,
         onSale: true,
         details: ['80 cotton', '20% polyester', 'Gender-neutral'],
         variants: [{
