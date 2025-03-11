@@ -51,9 +51,6 @@ Vue.component('socks', {
                 <ul>
                     <li v-for="size in sizes">{{size}}</li>
                 </ul>
-                <div class="cart">
-                    <p>Cart {{cart}}</p>
-                </div>
                 <button v-on:click=addToCart :disabled=!inStock
                         :class="{disabledButton: !inStock}">Add to cart
                 </button>
@@ -88,17 +85,13 @@ Vue.component('socks', {
                     onSale: 0
                 }],
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            cart: 0,
             selectedVariant: 0
         }
     },
 
     methods: {
         addToCart() {
-            this.cart += 1
-            if (this.cart > 10) {
-                this.cart = 10
-            }
+            this.$emit('add-to-cart')
         },
         reduceToCart() {
             this.cart -= 1
@@ -141,5 +134,6 @@ let app = new Vue({
     el: '#app',
     data: {
         premium: true,
+        cart: 0,
     }
 })
