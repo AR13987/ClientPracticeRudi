@@ -14,6 +14,7 @@ Vue.component('socks-detail', {
     </div>`
 })
 
+
 Vue.component('socks', {
     props: {
         premium: {
@@ -54,7 +55,8 @@ Vue.component('socks', {
                 <button v-on:click=addToCart :disabled=!inStock
                         :class="{disabledButton: !inStock}">Add to cart
                 </button>
-                <button v-on:click=reduceToCart>Reduce to cart</button>
+                <button v-on:click=reduceToCart :disabled=!inStock 
+                :class="{disabledButton: !inStock}">Reduce to cart</button>
             </div>
         </div>
     </div>`,
@@ -91,13 +93,11 @@ Vue.component('socks', {
 
     methods: {
         addToCart() {
-            this.$emit('add-to-cart')
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId);
         },
+
         reduceToCart() {
-            this.cart -= 1
-            if (this.cart < 0) {
-                this.cart = 0
-            }
+            this.$emit('reduce-to-cart', this.variants[this.selectedVariant].variantId);
         },
         updateSocks(index) {
             this.selectedVariant = index
@@ -134,6 +134,14 @@ let app = new Vue({
     el: '#app',
     data: {
         premium: true,
-        cart: 0,
-    }
+        cart: [],
+    },
+    methods: {
+        updateAddCart(id) {
+            this.cart.push(id)
+        },
+        updateReduceCart(id) {
+            this.cart.remove(id, 1)
+            }
+        }
 })
