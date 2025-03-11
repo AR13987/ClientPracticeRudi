@@ -17,6 +17,12 @@ Vue.component('socks-detail', {
 
 
 Vue.component('socks-review', {
+    props: {
+        reviews: {
+            type: Array,
+            required: true
+        }
+    },
     template: `
     <div>
     <h2>Reviews</h2>
@@ -78,7 +84,6 @@ Vue.component('socks-review', {
             name: null,
             review: null,
             rating: null,
-            reviews: [],
             errors: [],
             recommend: null
         }
@@ -99,6 +104,10 @@ Vue.component('socks-review', {
             }
             if (!this.recommend) {
                 this.errors.push("Please select whether you recommend this product.");
+            }
+
+            if (this.errors.length) {
+                return;
             }
 
 

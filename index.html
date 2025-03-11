@@ -16,7 +16,7 @@
         <p>Cart {{cart.length}}</p>
     </div>
     <socks :premium="premium" @add-to-cart="updateAddCart" @reduce-to-cart="updateReduceCart"></socks>
-    <socks-review @review-submitted="addReview"></socks-review>
+    <socks-review @review-submitted="addReview" :reviews="reviews"></socks-review>
 </div>
 </body>
 </html>
