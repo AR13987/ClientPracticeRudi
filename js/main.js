@@ -17,10 +17,16 @@ Vue.component('socks-detail', {
 })
 
 
-Vue.component('product-tabs', {
+Vue.component('socks-tabs', {
     props: {
         reviews: {
             type: Array, required: false
+        },
+        details: {
+            type: Array, required: true
+        },
+        shipping: {
+            type: Function, required: true
         }
     },
 
@@ -47,10 +53,16 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
          <socks-review></socks-review>
        </div>
+       <div v-show="selectedTab === 'Details'">
+         <socks-detail :details="details"></socks-detail>
+       </div>
+       <div v-show="selectedTab === 'Shipping'">
+         <p>Shipping: {{shipping()}}</p>
+       </div>
      </div>
 `, data() {
         return {
-            tabs: ['Reviews', 'Make a Review'], selectedTab: 'Reviews'
+            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'], selectedTab: 'Reviews'
         }
     }
 })
@@ -167,11 +179,10 @@ Vue.component('socks', {
             <!--         <p v-else>Out of Stock</p>-->
             <p :class="{OutOfStock: !inStock}" v-show="!inStock">Out of Stock</p>
             <p v-show="inStock">In Stock</p>
-            <p>Shipping: {{shipping}}</p>
             <span v-show="sale">On Sale</span>
             
             <div class="socks-detail">
-                <socks-detail :details="details"></socks-detail>
+<!--                <socks-detail :details="details"></socks-detail>-->
                 <div class="color-box" v-for="(variant, index) in variants" :key=variant.variantId
                      :style="{backgroundColor: variant.variantColor}"
                      @mouseover="updateSocks(index)">
@@ -236,13 +247,7 @@ Vue.component('socks', {
             return this.variants[this.selectedVariant].variantQuantity
         }, sale() {
             return this.variants[this.selectedVariant].onSale
-        }, shipping() {
-            if (this.premium) {
-                return "Free";
-            } else {
-                return 2.99
-            }
-        },
+        }
 
     }
 
@@ -251,7 +256,7 @@ Vue.component('socks', {
 
 let app = new Vue({
     el: '#app', data: {
-        premium: true, cart: [], reviews: []
+        premium: true, cart: [], reviews: [], details: ['80 cotton', '20% polyester', 'Gender-neutral']
     },
 
     methods: {
@@ -259,7 +264,14 @@ let app = new Vue({
             this.cart.push(id)
         }, updateReduceCart(id) {
             this.cart.splice(id, 1)
-        }
+        },
+        shipping() {
+            if (this.premium) {
+                return "Free";
+            } else {
+                return 2.99
+            }
+        },
     },
     mounted() {
         eventBus.$on('review-submitted', socksReview => {
