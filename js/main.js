@@ -210,13 +210,13 @@ Vue.component('socks', {
             variants: [{
                 variantId: 1,
                 variantColor: "green",
-                variantImage: "./assets/vmSocks-green-onWhite.jpg",
+                variantImage: "./image/vmSocks-green-onWhite.jpg",
                 variantQuantity: 10,
                 onSale: 1
             }, {
                 variantId: 2,
                 variantColor: "blue",
-                variantImage: "./assets/vmSocks-blue-onWhite.jpg",
+                variantImage: "./image/vmSocks-blue-onWhite.jpg",
                 variantQuantity: 0,
                 onSale: 0
             }],
