@@ -47,6 +47,7 @@ Vue.component('socks-tabs', {
            <p>Rating: {{ review.rating }}</p>
            <p>{{ review.review }}</p>
            <p>Recommend: {{review.recommend}}</p>
+           <p>Color socks: {{review.color}}</p>
            </li>
          </ul>
        </div>
@@ -107,7 +108,12 @@ Vue.component('socks-review', {
             <input type="radio" id="no" value="No" v-model="recommend">
             <label for="no">No</label>
         </p>
-
+        
+        <p>
+            <label for="color">Selected Sock Color:</label>
+            <input id="color" v-model="color" readonly>
+        </p>
+        
         <p>
             <input type="submit" value="Submit"> 
         </p>
@@ -116,7 +122,7 @@ Vue.component('socks-review', {
 
     data() {
         return {
-            name: null, review: null, rating: null, errors: [], recommend: null
+            name: null, review: null, rating: null, errors: [], recommend: null, color: ''
         }
     },
 
@@ -143,7 +149,7 @@ Vue.component('socks-review', {
 
 
             let socksReview = {
-                name: this.name, review: this.review, rating: this.rating, recommend: this.recommend
+                name: this.name, review: this.review, rating: this.rating, recommend: this.recommend, color: this.color
             };
 
             eventBus.$emit('review-submitted', socksReview)
@@ -152,6 +158,12 @@ Vue.component('socks-review', {
             this.rating = null;
             this.recommend = null;
         }
+    },
+
+    mounted() {
+        eventBus.$on('color-selected', (selectedColor) => {
+            this.color = selectedColor
+        })
     }
 })
 
@@ -174,9 +186,6 @@ Vue.component('socks', {
             <h1>{{title}}</h1>
             <a :href="link">{{linkText}}</a>
 
-            <!--         <p v-if="inventory > 10">In Stock</p>-->
-            <!--         <p v-else-if="inventory <=10 && inventory > 0">Almost sold out!</p>-->
-            <!--         <p v-else>Out of Stock</p>-->
             <p :class="{OutOfStock: !inStock}" v-show="!inStock">Out of Stock</p>
             <p v-show="inStock">In Stock</p>
             <span v-show="sale">On Sale</span>
@@ -232,9 +241,12 @@ Vue.component('socks', {
 
         reduceToCart() {
             this.$emit('reduce-to-cart', this.variants[this.selectedVariant].variantId);
-        }, updateSocks(index) {
+        },
+
+        updateSocks(index) {
             this.selectedVariant = index
-            console.log(index)
+            this.selectedColor = this.variants[index].variantColor
+            eventBus.$emit('color-selected', this.selectedColor)
         }
     },
 
